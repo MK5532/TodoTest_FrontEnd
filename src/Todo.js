@@ -47,7 +47,7 @@ class Todo extends React.Component {
             <ListItem>
                 <Checkbox
                     checked={item.done}
-                    onChange={this.checkboxEventHander}
+                    onChange={this.checkboxEventHander} 
                 />
                 <ListItemText>
                     <InputBase

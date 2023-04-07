@@ -1,6 +1,7 @@
 import React from 'react';
 import Todo from './Todo';
 import AddTodo from './AddTodo';
+import DeleteItem from './DeleteItem';
 import { Paper, List, Container, Grid, Button, AppBar, Toolbar, Typography } from "@material-ui/core";
 import './App.css';
 import { call, signout } from './service/ApiService';
@@ -11,7 +12,7 @@ class App extends React.Component {
     this.state = { // item에 item.id, item.title, item.done 매개변수 이름과 값 할당
       items: [],
       /* 로딩 중이라는 상태를 표현할 변수 생성자에 상태 변수를 초기화한다 */
-      loading:true,
+      loading: true,
     };
   }
 
@@ -33,10 +34,24 @@ class App extends React.Component {
     );
   }
 
+  deleteComplete = () => {
+    const thisItems = this.state.items;
+
+    thisItems.map((e) => {
+      if (e.done === true) {
+        call("/todo", "DELETE", e).then((response) =>
+          this.setState({ items: response.data })
+        );
+      }
+
+    })
+  }
+
+
   // componentDidMount는 페이즈(돔) 마운트가 일어나고 렌더링 되기 전에 실행된다.
   componentDidMount() {
     call("/todo", "GET", null).then((response) =>
-      this.setState({ items: response.data, loading:false })
+      this.setState({ items: response.data, loading: false })
     );
   }
 
@@ -49,7 +64,7 @@ class App extends React.Component {
       <Paper style={{ margin: 16 }}>
         <List>
           {this.state.items.map((item, idx) => (
-            <Todo item={item} key={item.id} delete={this.delete} update={this.update}/>
+            <Todo item={item} key={item.id} delete={this.delete} update={this.update} />
           ))}
         </List>
       </Paper>
@@ -78,6 +93,7 @@ class App extends React.Component {
         <Container maxWidth="md">
           <AddTodo add={this.add} />
           <div className='TodoList'>{todoItems}</div>
+          <DeleteItem deleteComplete={this.deleteComplete} />
         </Container>
       </div>
     );
@@ -86,7 +102,7 @@ class App extends React.Component {
     var loadingPage = <h1>로딩중..</h1>
     var content = loadingPage;
 
-    if(!this.state.loading){
+    if (!this.state.loading) {
       content = todoListPage;
     }
 
